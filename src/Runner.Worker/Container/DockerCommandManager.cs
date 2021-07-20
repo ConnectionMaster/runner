@@ -46,7 +46,7 @@ namespace GitHub.Runner.Worker.Container
         {
             base.Initialize(hostContext);
             DockerPath = WhichUtil.Which("docker", true, Trace);
-            DockerInstanceLabel = IOUtil.GetPathHash(hostContext.GetDirectory(WellKnownDirectory.Root)).Substring(0, 6);
+            DockerInstanceLabel = IOUtil.GetSha256Hash(hostContext.GetDirectory(WellKnownDirectory.Root)).Substring(0, 6);
         }
 
         public async Task<DockerVersion> DockerVersion(IExecutionContext context)
@@ -197,8 +197,7 @@ namespace GitHub.Runner.Worker.Container
 
             dockerOptions.Add($"--workdir {container.ContainerWorkDirectory}");
             dockerOptions.Add($"--rm");
-            dockerOptions.Add($"-t");
-            
+
             foreach (var env in container.ContainerEnvironmentVariables)
             {
                 // e.g. -e MY_SECRET maps the value into the exec'ed process without exposing
